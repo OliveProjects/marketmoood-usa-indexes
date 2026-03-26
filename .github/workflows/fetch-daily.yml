@@ -1,0 +1,35 @@
+name: Fetch Index History (Daily)
+
+on:
+  schedule:
+    - cron: '15 22 * * *'   # 22:15 UTC daily (after US market close)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Fetch daily data
+        run: python scripts/fetch_daily.py
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/
+          git diff --staged --quiet || git commit -m "daily: $(date -u '+%Y-%m-%d')"
+          git pull --rebase origin main
+          git push
