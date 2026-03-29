@@ -100,6 +100,10 @@ def main():
     stooq_end   = now.strftime("%Y%m%d")
 
     for name, symbol in STOOQ_SYMBOLS.items():
+        yahoo_sym = STOOQ_TO_YAHOO.get(symbol)
+        history = None
+
+        # Try Stooq first (deeper history)
         print(f"  {name} (Stooq)")
         try:
             r = requests.get(
@@ -108,23 +112,51 @@ def main():
                 headers=HEADERS, timeout=20,
             )
             r.raise_for_status()
-            history = parse_stooq_csv(r.text)
-            if len(history) < 2:
-                continue
-            yahoo_sym = STOOQ_TO_YAHOO.get(symbol)
-            price, prev_close = fetch_live_yahoo(yahoo_sym) if yahoo_sym else (None, None)
-            if not price:
-                price = history[-1]["y"]
-                prev_close = history[-2]["y"]
-            change_abs = price - prev_close
-            change_pct = change_abs / prev_close * 100.0
-            indices.append({
-                "name": name, "price": price,
-                "changePct": change_pct, "changeAbs": change_abs,
-                "history": history,
-            })
+            parsed = parse_stooq_csv(r.text)
+            if len(parsed) >= 2:
+                history = parsed
         except Exception as e:
-            print(f"    ERROR {name}: {e}")
+            print(f"    Stooq failed for {name}: {e}")
+
+        # Fall back to Yahoo if Stooq returned nothing
+        if not history and yahoo_sym:
+            print(f"  {name} (Yahoo fallback)")
+            try:
+                r = requests.get(
+                    f"{YAHOO_BASE}{yahoo_sym}",
+                    params={"interval": "1d", "range": "5y"},
+                    headers=HEADERS, timeout=20,
+                )
+                r.raise_for_status()
+                result = r.json()["chart"]["result"][0]
+                timestamps = result["timestamp"]
+                closes = result["indicators"]["quote"][0]["close"]
+                parsed = [
+                    {"x": int(ts) * 1000, "y": round(float(c), 4)}
+                    for ts, c in zip(timestamps, closes)
+                    if c is not None
+                ]
+                if len(parsed) >= 2:
+                    history = parsed
+            except Exception as e:
+                print(f"    Yahoo fallback failed for {name}: {e}")
+
+        if not history:
+            print(f"    SKIP {name}: no data from Stooq or Yahoo")
+            time.sleep(0.4)
+            continue
+
+        price, prev_close = fetch_live_yahoo(yahoo_sym) if yahoo_sym else (None, None)
+        if not price:
+            price = history[-1]["y"]
+            prev_close = history[-2]["y"]
+        change_abs = price - prev_close
+        change_pct = change_abs / prev_close * 100.0
+        indices.append({
+            "name": name, "price": price,
+            "changePct": change_pct, "changeAbs": change_abs,
+            "history": history,
+        })
         time.sleep(0.4)
 
     for name, symbol in YAHOO_SYMBOLS.items():
