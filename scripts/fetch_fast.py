@@ -21,19 +21,10 @@ HEADERS = {
 YAHOO_BASE = "https://query1.finance.yahoo.com/v8/finance/chart/"
 
 SYMBOLS = {
-    "S&P 500":       "%5EGSPC",
-    "Dow Jones":     "%5EDJI",
-    "NASDAQ":        "%5EIXIC",
-    "Russell 2000":  "%5ERUT",
-    "OMXS30":        "%5EOMXS30",
-    "DAX 40":        "%5EGDAXI",
-    "FTSE 100":      "%5EFTSE",
-    "CAC 40":        "%5EFCHI",
-    "Euro Stoxx 50": "%5ESTOXX50E",
-    "AEX":           "%5EAEX",
-    "SMI":           "%5ESSMI",
-    "IBEX 35":       "%5EIBEX",
-    "FTSE MIB":      "FTSEMIB.MI",
+    "S&P 500":      "%5EGSPC",
+    "Dow Jones":    "%5EDJI",
+    "NASDAQ":       "%5EIXIC",
+    "Russell 2000": "%5ERUT",
 }
 
 
