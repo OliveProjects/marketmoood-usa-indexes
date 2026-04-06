@@ -21,19 +21,37 @@ HEADERS = {
 YAHOO_BASE = "https://query1.finance.yahoo.com/v8/finance/chart/"
 STOOQ_BASE = "https://stooq.com/q/d/l/"
 
-# Stooq has deeper history for major US indexes
+# Stooq has deeper history for major indexes
 STOOQ_SYMBOLS = {
-    "S&P 500":   "^spx",
-    "Dow Jones": "^dji",
-    "NASDAQ":    "^ndq",
+    "S&P 500":      "^spx",
+    "Dow Jones":    "^dji",
+    "NASDAQ":       "^ndq",
+    "OMXS30":       "^omxs30",
+    "DAX 40":       "^dax",
+    "FTSE 100":     "^ukx",
+    "CAC 40":       "^cac",
+    "Euro Stoxx 50":"^stoxx50e",
+    "AEX":          "^aex",
+    "SMI":          "^smi",
+    "IBEX 35":      "^ibex",
+    "FTSE MIB":     "^ftsemib",
 }
 # Yahoo symbol for live price override on Stooq entries
 STOOQ_TO_YAHOO = {
-    "^spx": "%5EGSPC",
-    "^dji": "%5EDJI",
-    "^ndq": "%5EIXIC",
+    "^spx":      "%5EGSPC",
+    "^dji":      "%5EDJI",
+    "^ndq":      "%5EIXIC",
+    "^omxs30":   "%5EOMXS30",
+    "^dax":      "%5EGDAXI",
+    "^ukx":      "%5EFTSE",
+    "^cac":      "%5EFCHI",
+    "^stoxx50e": "%5ESTOXX50E",
+    "^aex":      "%5EAEX",
+    "^smi":      "%5ESSMI",
+    "^ibex":     "%5EIBEX",
+    "^ftsemib":  "FTSEMIB.MI",
 }
-# Yahoo-only index
+# Yahoo-only indexes
 YAHOO_SYMBOLS = {
     "Russell 2000": "%5ERUT",
 }
