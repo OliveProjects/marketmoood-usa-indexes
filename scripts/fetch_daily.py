@@ -191,6 +191,10 @@ def main():
             print(f"    ERROR {name}: {e}")
         time.sleep(0.4)
 
+    if len(indices) < 3:
+        print(f"  Only {len(indices)} index/indices fetched (expected 4) — skipping save to preserve existing data.")
+        return
+
     save("data/indexes-history.json", {
         "fetched_at": int(time.time() * 1000),
         "indices": indices,
